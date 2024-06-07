@@ -7,6 +7,7 @@
 
 import Foundation
 import GoogleGenerativeAI
+import SwiftData
 
 enum APIKey {
     // Fetch the API key from `GenerativeAI-Info.plist`
