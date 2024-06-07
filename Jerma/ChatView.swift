@@ -6,16 +6,17 @@
 //
 
 import GoogleGenerativeAI
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 struct ChatView: View {
     @State private var Question: String = ""
     @State private var Question2: String = ""
     @State private var FinalResponse: String = ""
-    
-    @State private var pickedImages: UIImage = UIImage()
-    
+
+    @State private var chosenimages = [PhotosPickerItem]()
+    @State private var images = [Image]()
+
     @State private var PickedModel: ModelsAvailble = ModelsAvailble.gemini_1_5_flash
 
     var body: some View {
@@ -25,6 +26,15 @@ struct ChatView: View {
                     VStack {
                         ScrollView {
                             if !Question2.isEmpty {
+                                LazyHStack {
+                                    ForEach(0 ..< images.count, id: \.self) { i in
+                                        images[i]
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 100, height: 100)
+                                    }.frame(maxWidth: .infinity, maxHeight: 100)
+                                }
+
                                 Text("You: \(Question2)")
                                     .multilineTextAlignment(.leading)
                                     .font(.headline)
@@ -41,10 +51,40 @@ struct ChatView: View {
 
                     }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).textSelection(.enabled).padding()
                     VStack {
+                        VStack {
+                            if !images.isEmpty {
+                                Text("^[Including \(images.count) images:](inflect: true)")
+                                    .foregroundStyle(.gray)
+                                    .textCase(.uppercase)
+                                    .font(.callout)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                                LazyHStack {
+                                    ForEach(0 ..< images.count, id: \.self) { i in
+                                        images[i]
+                                            .resizable()
+                                            .scaledToFit()
+
+                                    }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottom)
+                                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                            }
+
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+
                         HStack {
-                            Button(action: { print("Add things") }, label: {
+                            PhotosPicker(selection: $chosenimages) {
                                 Image(systemName: "plus.square")
-                            }).buttonStyle(.bordered)
+                            }.buttonStyle(.bordered)
+                                .onChange(of: chosenimages) { newItems in
+                                    Task {
+                                        images.removeAll()
+
+                                        for item in newItems {
+                                            if let image = try? await item.loadTransferable(type: Image.self) {
+                                                images.append(image)
+                                            }
+                                        }
+                                    }
+                                }
 
                             TextField("AiQuestionBox", text: $Question, prompt: Text("Ask \(PickedModel.rawValue) something"), axis: .vertical).textFieldStyle(.roundedBorder)
                             Button {
