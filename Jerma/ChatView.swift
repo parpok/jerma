@@ -10,108 +10,56 @@ import PhotosUI
 import SwiftUI
 
 struct ChatView: View {
-    @State private var Question: String = ""
-    @State private var Question2: String = ""
-    @State private var FinalResponse: String = ""
+    @State private var ChosenModel: ModelsAvailble = .gemini_1_5_flash
 
-    @State private var chosenimages = [PhotosPickerItem]()
-    @State private var images = [Image]()
+    @State private var AIAnswer: String = ""
 
-    @State private var PickedModel: ModelsAvailble = ModelsAvailble.gemini_1_5_flash
+    @State private var ChatInputImages = [Image]()
 
+    @State private var UserPrompt: String = ""
     var body: some View {
-        VStack {
-            NavigationStack {
-                VStack {
-                    VStack {
-                        ScrollView {
-                            if !Question2.isEmpty {
-                                LazyHStack {
-                                    ForEach(0 ..< images.count, id: \.self) { i in
-                                        images[i]
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                    }.frame(maxWidth: .infinity, maxHeight: 100)
-                                }
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    if !UserPrompt.isEmpty {
+                        Text("You: \n \(UserPrompt)")
+                            .multilineTextAlignment(.leading)
+                            .font(.subheadline)
+                            .defaultScrollAnchor(.leading)
+                    }
 
-                                Text("You: \(Question2)")
-                                    .multilineTextAlignment(.leading)
-                                    .font(.headline)
-                            }
-                            Spacer()
+                    if !ChatInputImages.isEmpty {
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach(0 ..< ChatInputImages.count, id: \.self) {
+                                    i in
+                                    ChatInputImages[i]
+                                        .resizable()
+                                        .scaledToFit()
 
-                            if !FinalResponse.isEmpty {
-                                Text("Ai says: \(FinalResponse)")
-                                    .multilineTextAlignment(.leading)
-                                    .font(.subheadline)
-                                    .defaultScrollAnchor(.center)
+                                }.frame(maxWidth: .infinity, maxHeight: 100)
                             }
                         }
+                    }
 
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).textSelection(.enabled).padding()
-                    VStack {
-                        VStack {
-                            if !images.isEmpty {
-                                Text("^[Including \(images.count) images:](inflect: true)")
-                                    .foregroundStyle(.gray)
-                                    .textCase(.uppercase)
-                                    .font(.callout)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                                ScrollView(.horizontal) {
-                                    LazyHStack {
-                                        ForEach(0 ..< images.count, id: \.self) { i in
-                                            images[i]
-                                                .resizable()
-                                                .scaledToFit()
+                    if !AIAnswer.isEmpty {
+                        Text("Ai says: \n \(AIAnswer)")
+                            .multilineTextAlignment(.leading)
+                            .font(.subheadline)
+                            .defaultScrollAnchor(.leading)
+                    }
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-                                        }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottom)
-                                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                            }
-
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-
-                        HStack {
-                            PhotosPicker(selection: $chosenimages) {
-                                Image(systemName: "plus.square")
-                            }.buttonStyle(.bordered)
-                                .onChange(of: chosenimages) { _, newItems in
-                                    Task {
-                                        images.removeAll()
-
-                                        for item in newItems {
-                                            if let image = try? await item.loadTransferable(type: Image.self) {
-                                                images.append(image)
-                                            }
-                                        }
-                                    }
-                                }
-
-                            TextField("AiQuestionBox", text: $Question, prompt: Text("Ask \(PickedModel.rawValue) something"), axis: .vertical).textFieldStyle(.roundedBorder)
-                            Button {
-                                Question2 = Question
-                                Task {
-                                    let response = try await model.generateContent(Question)
-                                    if let text = response.text {
-                                        print(text)
-                                        FinalResponse = text
-                                    }
-                                    Question = ""
-                                }
-                            } label: {
-                                Image(systemName: "paperplane")
-                            }.buttonStyle(.borderedProminent)
-                        }
-                    }.imageScale(.large).buttonBorderShape(.roundedRectangle).frame(maxWidth: .infinity, alignment: .bottom).padding(EdgeInsets(top: 0, leading: 2.5, bottom: 20, trailing: 2.5))
-                }.toolbar {
+                AskAiView(UserQuestionSubmitted: UserPrompt, Answer: AIAnswer, ResultImages: ChatInputImages)
+            }.navigationTitle("GermaAiChat")
+                .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             ForEach(ModelsAvailble.allCases) { model in
                                 Button {
-                                    PickedModel = model
+                                    ChosenModel = model
                                 } label: {
-                                    if model == PickedModel {
+                                    if model == ChosenModel {
                                         Image(systemName: "checkmark")
                                         Text(model.rawValue)
                                     } else {
@@ -120,19 +68,82 @@ struct ChatView: View {
                                 }
                             }
                         } label: {
-                            Label(
-                                title: { Text("Choose model") },
-                                icon: { Image(systemName: "sparkles") }
-                            )
+                            Label(title: { Text("Choose language model") }, icon: { Image(systemName: "sparkles") })
                         }
                     }
                 }
-                .navigationTitle("Ai")
-            }
         }
     }
 }
 
 #Preview {
     ChatView()
+}
+
+struct AskAiView: View {
+    @State private var UserQuestion: String = ""
+    @State var UserQuestionSubmitted: String = ""
+
+    @State var Answer: String = ""
+
+    @State private var ChosenImages = [PhotosPickerItem]()
+    @State var ResultImages: [Image]
+
+    var body: some View {
+        VStack {
+            if !ResultImages.isEmpty {
+                VStack {
+                    Text("^[Including \(ResultImages.count) images:](inflect: true)").foregroundStyle(.gray).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(0 ..< ResultImages.count, id: \.self) {
+                                i in
+                                ResultImages[i]
+                                    .resizable()
+                                    .scaledToFit()
+
+                            }.frame(maxWidth: .infinity, maxHeight: 100)
+                        }
+                    }
+                }
+            }
+            HStack {
+                PhotosPicker(selection: $ChosenImages) {
+                    Image(systemName: "plus.square")
+                }.buttonStyle(.bordered)
+                    .onChange(of: ChosenImages) { _, newItems in
+                        Task {
+                            ResultImages.removeAll()
+
+                            for item in newItems {
+                                if let image = try? await item.loadTransferable(type: Image.self) {
+                                    ResultImages.append(image)
+                                }
+                            }
+                        }
+                    }
+
+                TextField("Ask something", text: $UserQuestion, axis: .vertical)
+
+                Button {
+                    Task {
+                        let response = try await model.generateContent(UserQuestion)
+                        if let text = response.text {
+                            print(text)
+                            Answer = text
+                        }
+                        UserQuestionSubmitted = UserQuestion
+                    }
+                } label: {
+                    Image(systemName: "paperplane")
+                }.buttonStyle(.borderedProminent)
+
+            }.padding(EdgeInsets(top: 0, leading: 2.5, bottom: 20, trailing: 2.5))
+
+        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+    }
+}
+
+#Preview("AI Chat component") {
+    AskAiView(Answer: "This is a preview. Hello there ya curious buddy", ResultImages: [Image(.car)])
 }

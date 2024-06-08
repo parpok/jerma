@@ -42,3 +42,4 @@ enum ModelsAvailble: String, CaseIterable, Identifiable {
 // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
 // Access your API key from your on-demand resource .plist file (see "Set up your API key" above)
 let model = GenerativeModel(name: String(ModelsAvailble.gemini_1_5_flash.rawValue), apiKey: APIKey.default)
+let chat = model.startChat()
