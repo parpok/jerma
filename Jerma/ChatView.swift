@@ -58,23 +58,25 @@ struct ChatView: View {
                                     .textCase(.uppercase)
                                     .font(.callout)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                                LazyHStack {
-                                    ForEach(0 ..< images.count, id: \.self) { i in
-                                        images[i]
-                                            .resizable()
-                                            .scaledToFit()
+                                ScrollView(.horizontal) {
+                                    LazyHStack {
+                                        ForEach(0 ..< images.count, id: \.self) { i in
+                                            images[i]
+                                                .resizable()
+                                                .scaledToFit()
 
-                                    }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottom)
+                                        }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottom)
+                                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                             }
 
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
 
                         HStack {
                             PhotosPicker(selection: $chosenimages) {
                                 Image(systemName: "plus.square")
                             }.buttonStyle(.bordered)
-                                .onChange(of: chosenimages) { newItems in
+                                .onChange(of: chosenimages) { _, newItems in
                                     Task {
                                         images.removeAll()
 

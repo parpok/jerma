@@ -10,9 +10,9 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationSplitView {
-            List {
-                ChatView()
-            }
+//            List {
+//                ChatView()
+//            }
         } detail: {
             ChatView()
         }
