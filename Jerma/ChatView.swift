@@ -26,6 +26,7 @@ struct ChatView: View {
                             .multilineTextAlignment(.leading)
                             .font(.subheadline)
                             .defaultScrollAnchor(.leading)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
 
                     if !ChatInputImages.isEmpty {
@@ -37,7 +38,7 @@ struct ChatView: View {
                                         .resizable()
                                         .scaledToFit()
 
-                                }.frame(maxWidth: .infinity, maxHeight: 100)
+                                }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .topLeading)
                             }
                         }
                     }
@@ -50,7 +51,7 @@ struct ChatView: View {
                     }
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-                AskAiView(UserQuestionSubmitted: UserPrompt, Answer: AIAnswer, ResultImages: ChatInputImages)
+                AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImages: $ChatInputImages)
             }.navigationTitle("GermaAiChat")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -82,12 +83,12 @@ struct ChatView: View {
 
 struct AskAiView: View {
     @State private var UserQuestion: String = ""
-    @State var UserQuestionSubmitted: String = ""
+    @Binding var UserQuestionSubmitted: String
 
-    @State var Answer: String = ""
+    @Binding var Answer: String
 
     @State private var ChosenImages = [PhotosPickerItem]()
-    @State var ResultImages: [Image]
+    @Binding var ResultImages: [Image]
 
     var body: some View {
         VStack {
@@ -133,6 +134,7 @@ struct AskAiView: View {
                             Answer = text
                         }
                         UserQuestionSubmitted = UserQuestion
+                        UserQuestion = ""
                     }
                 } label: {
                     Image(systemName: "paperplane")
@@ -142,8 +144,4 @@ struct AskAiView: View {
 
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
-}
-
-#Preview("AI Chat component") {
-    AskAiView(Answer: "This is a preview. Hello there ya curious buddy", ResultImages: [Image(.car)])
 }
