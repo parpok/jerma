@@ -145,3 +145,13 @@ struct AskAiView: View {
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }
+
+struct AskingAIPreview: PreviewProvider {
+    @State static var Question = "Hello, U up"
+    @State static var Answer = "This is a test"
+    @State static var Images = [Image(.car)]
+
+    static var previews: some View {
+        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImages: $Images)
+    }
+}
