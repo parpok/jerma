@@ -43,13 +43,15 @@ struct ChatView: View {
                         }
                     }
 
+                    Spacer()
+
                     if !AIAnswer.isEmpty {
                         Text("Ai says: \n \(AIAnswer)")
                             .multilineTextAlignment(.leading)
                             .font(.subheadline)
                             .defaultScrollAnchor(.leading)
                     }
-                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
                 AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImages: $ChatInputImages)
             }.navigationTitle("GermaAiChat")
@@ -123,18 +125,29 @@ struct AskAiView: View {
                             }
                         }
                     }
-
                 TextField("Ask something", text: $UserQuestion, axis: .vertical)
+                    .textFieldStyle(.roundedBorder).onKeyPress(.return, action: {
+                        UserQuestionSubmitted = UserQuestion
+                        UserQuestion = ""
+                        Task {
+                            let response = try await model.generateContent(UserQuestion)
+                            if let text = response.text {
+                                print(text)
+                                Answer = text
+                            }
+                        }
+                        return .handled
+                    })
 
                 Button {
+                    UserQuestionSubmitted = UserQuestion
+                    UserQuestion = ""
                     Task {
                         let response = try await model.generateContent(UserQuestion)
                         if let text = response.text {
                             print(text)
                             Answer = text
                         }
-                        UserQuestionSubmitted = UserQuestion
-                        UserQuestion = ""
                     }
                 } label: {
                     Image(systemName: "paperplane")
