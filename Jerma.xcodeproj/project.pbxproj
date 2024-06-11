@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B0056AE2C118B5900F71E7A /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B0056AD2C118B5900F71E7A /* GenerativeAI-Info.plist */; };
 		8B0056B02C118BB200F71E7A /* BizLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0056AF2C118BB200F71E7A /* BizLogic.swift */; };
+		8BC7D3C82C18C62800941DE0 /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BC7D3C72C18C62800941DE0 /* GenerativeAI-Info.plist */; };
 		8BF171C22C110CA7004F2DEF /* JermaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF171C12C110CA7004F2DEF /* JermaApp.swift */; };
 		8BF171C42C110CA7004F2DEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF171C32C110CA7004F2DEF /* ContentView.swift */; };
 		8BF171C62C110CA8004F2DEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8BF171C52C110CA8004F2DEF /* Assets.xcassets */; };
@@ -18,8 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8B0056AD2C118B5900F71E7A /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
 		8B0056AF2C118BB200F71E7A /* BizLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BizLogic.swift; sourceTree = "<group>"; };
+		8BC7D3C72C18C62800941DE0 /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
 		8BF171BE2C110CA7004F2DEF /* Jerma.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jerma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BF171C12C110CA7004F2DEF /* JermaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JermaApp.swift; sourceTree = "<group>"; };
 		8BF171C32C110CA7004F2DEF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -60,10 +60,10 @@
 			isa = PBXGroup;
 			children = (
 				8BF171C12C110CA7004F2DEF /* JermaApp.swift */,
-				8B0056AD2C118B5900F71E7A /* GenerativeAI-Info.plist */,
 				8BF171C32C110CA7004F2DEF /* ContentView.swift */,
 				8BF341D92C13B9A30096D043 /* ChatView.swift */,
 				8B0056AF2C118BB200F71E7A /* BizLogic.swift */,
+				8BC7D3C72C18C62800941DE0 /* GenerativeAI-Info.plist */,
 				8BF171C52C110CA8004F2DEF /* Assets.xcassets */,
 				8BF171C72C110CA8004F2DEF /* Preview Content */,
 			);
@@ -144,7 +144,7 @@
 			files = (
 				8BF171C92C110CA8004F2DEF /* Preview Assets.xcassets in Resources */,
 				8BF171C62C110CA8004F2DEF /* Assets.xcassets in Resources */,
-				8B0056AE2C118B5900F71E7A /* GenerativeAI-Info.plist in Resources */,
+				8BC7D3C82C18C62800941DE0 /* GenerativeAI-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

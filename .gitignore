@@ -1,2 +1,4 @@
 GenerativeAI-Info.plist
 .DS_Store
+*.xcuserstate
+UserInterfaceState.xcuserstate
