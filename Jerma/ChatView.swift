@@ -130,11 +130,7 @@ struct AskAiView: View {
                         UserQuestionSubmitted = UserQuestion
                         UserQuestion = ""
                         Task {
-                            let response = try await model.generateContent(UserQuestion)
-                            if let text = response.text {
-                                print(text)
-                                Answer = text
-                            }
+                            try await askAI(Question: UserQuestionSubmitted, Answer: Answer)
                         }
                         return .handled
                     })
@@ -143,11 +139,7 @@ struct AskAiView: View {
                     UserQuestionSubmitted = UserQuestion
                     UserQuestion = ""
                     Task {
-                        let response = try await model.generateContent(UserQuestion)
-                        if let text = response.text {
-                            print(text)
-                            Answer = text
-                        }
+                        try await askAI(Question: UserQuestionSubmitted, Answer: Answer)
                     }
                 } label: {
                     Image(systemName: "paperplane")
@@ -156,6 +148,15 @@ struct AskAiView: View {
             }.padding(EdgeInsets(top: 0, leading: 2.5, bottom: 20, trailing: 2.5))
 
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+    }
+
+    func askAI(Question: String, Answer: String) async throws -> String {
+        let response = try await model.generateContent(Question)
+        if let text = response.text {
+            print(text)
+            self.Answer = text
+        }
+        return Answer
     }
 }
 
