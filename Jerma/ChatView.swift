@@ -14,7 +14,7 @@ struct ChatView: View {
 
     @State private var AIAnswer: String = ""
 
-    @State private var ChatInputImages = [Image]()
+    @State private var ChatInputImages = [Data]()
 
     @State private var UserPrompt: String = ""
     var body: some View {
@@ -34,7 +34,7 @@ struct ChatView: View {
                             HStack {
                                 ForEach(0 ..< ChatInputImages.count, id: \.self) {
                                     i in
-                                    ChatInputImages[i]
+                                    Image(uiImage: UIImage(data: ChatInputImages[i])!)
                                         .resizable()
                                         .scaledToFit()
 
@@ -53,7 +53,7 @@ struct ChatView: View {
                     }
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
-                AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImages: $ChatInputImages)
+                AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImagesSubmitted: $ChatInputImages)
             }.navigationTitle("GermaAiChat")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -90,7 +90,9 @@ struct AskAiView: View {
     @Binding var Answer: String
 
     @State private var ChosenImages = [PhotosPickerItem]()
-    @Binding var ResultImages: [Image]
+    @State private var ResultImages: [Data] = []
+    @Binding var ResultImagesSubmitted: [Data]
+
 
     var body: some View {
         VStack {
@@ -101,7 +103,7 @@ struct AskAiView: View {
                         HStack {
                             ForEach(0 ..< ResultImages.count, id: \.self) {
                                 i in
-                                ResultImages[i]
+                                Image(uiImage: UIImage(data: ResultImages[i])!)
                                     .resizable()
                                     .scaledToFit()
 
@@ -119,7 +121,7 @@ struct AskAiView: View {
                             ResultImages.removeAll()
 
                             for item in newItems {
-                                if let image = try? await item.loadTransferable(type: Image.self) {
+                                if let image = try? await item.loadTransferable(type: Data.self) {
                                     ResultImages.append(image)
                                 }
                             }
@@ -129,6 +131,9 @@ struct AskAiView: View {
                     .textFieldStyle(.roundedBorder).onKeyPress(.return, action: {
                         UserQuestionSubmitted = UserQuestion
                         UserQuestion = ""
+                        
+                        ResultImagesSubmitted = ResultImages
+                        ResultImages = []
                         Task {
                             try await askAI(Question: UserQuestionSubmitted, Answer: Answer)
                         }
@@ -163,9 +168,18 @@ struct AskAiView: View {
 struct AskingAIPreview: PreviewProvider {
     @State static var Question = "Hello, U up"
     @State static var Answer = "This is a test"
-    @State static var Images = [Image(.car)]
+    static var ImagesToData: [Data] {
+        var arr: [Data] = []
+
+        let image = UIImage(resource: .car)
+        let data = image.jpegData(compressionQuality: 0.5)
+        arr.append(data!)
+
+        return arr
+    }
+    @State static var Images: [Data] = ImagesToData
 
     static var previews: some View {
-        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImages: $Images)
+        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImagesSubmitted: $Images)
     }
 }
