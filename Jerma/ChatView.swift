@@ -86,7 +86,7 @@ struct AskAiView: View {
 
     @Binding var Answer: String
 
-    @State private var ChosenImage = [PhotosPickerItem]()
+    @State private var ChosenImage: PhotosPickerItem? = nil
     @State private var ResultImage: Data = Data()
     @Binding var ResultImageSubmitted: Data
 
@@ -109,14 +109,12 @@ struct AskAiView: View {
                 PhotosPicker(selection: $ChosenImage) {
                     Image(systemName: "plus.square")
                 }.buttonStyle(.bordered)
-                    .onChange(of: ChosenImage) { _, newItems in
+                    .onChange(of: ChosenImage) {
                         Task {
-                            ResultImage.removeAll()
-
-                            for item in newItems {
-                                if let image = try? await item.loadTransferable(type: Data.self) {
-                                    ResultImage.append(image)
-                                }
+                            if let loaded = try? await ChosenImage?.loadTransferable(type: Data.self) {
+                                ResultImage = loaded
+                            } else {
+                                print("Upload didn't work")
                             }
                         }
                     }
