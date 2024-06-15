@@ -149,13 +149,13 @@ struct AskAiView: View {
 
     func askAI(Question: String, Media: Data, Answer: String) async throws -> String {
         if !Media.isEmpty {
-            let response = try await model.generateContent(Question, UIImage(data: Media)!)
+            let response = try await chat.sendMessage(Question, UIImage(data: Media)!)
             if let text = response.text {
                 print(text)
                 self.Answer = text
             }
         } else {
-            let response = try await model.generateContent(Question)
+            let response = try await chat.sendMessage(Question)
             if let text = response.text {
                 print(text)
                 self.Answer = text
@@ -164,26 +164,21 @@ struct AskAiView: View {
         return Answer
     }
 }
-
-struct AskingAIPreview: PreviewProvider {
-    @State static var Question = "Hello, U up"
-    @State static var Answer = "This is a test"
-<<<<<<< HEAD
-    static var ImageToData: Data {
-        let image = UIImage(resource: .car)
-        let data = image.pngData()
-        return data!
-    }
-
-    @State static var ImageSub: Data = ImageToData
-=======
-
-    @State static var ImageSub: Data = Data()
-    // you know what f that including image. Data will be empty, add image in the preview yourself you lazy F
-    
->>>>>>> 519e5d4 (Fix preview by not giving a fuck)
-
-    static var previews: some View {
-        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImageSubmitted: $ImageSub)
-    }
-}
+//
+//struct AskingAIPreview: PreviewProvider {
+//    @State static var Question = "Hello, U up"
+//    @State static var Answer = "This is a test"
+//    static var ImageToData: Data {
+//        let image = UIImage(resource: .car)
+//        let data = image.pngData()
+//        return data!
+//    }
+//    
+//
+//
+//    @State static var ImageSub: Data = ImageToData
+//
+//    static var previews: some View {
+//        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImageSubmitted: $ImageSub)
+//    }
+//}
