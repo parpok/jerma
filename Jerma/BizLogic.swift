@@ -43,3 +43,20 @@ enum ModelsAvailble: String, CaseIterable, Identifiable {
 // Access your API key from your on-demand resource .plist file (see "Set up your API key" above)
 let model = GenerativeModel(name: String(ModelsAvailble.gemini_1_5_flash.rawValue), apiKey: APIKey.default)
 let chat = model.startChat()
+
+@Model class Chats {
+    @Attribute(.unique)
+    var id: UUID
+    @Attribute(.preserveValueOnDeletion)
+    var chatHistory: [ModelContent]
+
+//    @available(iOS 18, *)
+//        #Index<Chats>([\.id], [\.chatHistory])
+//        #Unique<Chats>([\.id])
+// Guess who wanted to integrade new SwiftData things but can't because sorry only iOS 18 and can't put it behind Availble or extensions
+
+    init(id: UUID, chatHistory: [ModelContent]) {
+        self.id = id
+        self.chatHistory = chatHistory
+    }
+}
