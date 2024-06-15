@@ -47,6 +47,7 @@ struct ChatView: View {
                             .multilineTextAlignment(.leading)
                             .font(.subheadline)
                             .defaultScrollAnchor(.leading)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
