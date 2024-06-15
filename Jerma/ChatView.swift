@@ -168,6 +168,7 @@ struct AskAiView: View {
 struct AskingAIPreview: PreviewProvider {
     @State static var Question = "Hello, U up"
     @State static var Answer = "This is a test"
+<<<<<<< HEAD
     static var ImageToData: Data {
         let image = UIImage(resource: .car)
         let data = image.pngData()
@@ -175,6 +176,12 @@ struct AskingAIPreview: PreviewProvider {
     }
 
     @State static var ImageSub: Data = ImageToData
+=======
+
+    @State static var ImageSub: Data = Data()
+    // you know what f that including image. Data will be empty, add image in the preview yourself you lazy F
+    
+>>>>>>> 519e5d4 (Fix preview by not giving a fuck)
 
     static var previews: some View {
         AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImageSubmitted: $ImageSub)
