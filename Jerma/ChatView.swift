@@ -50,8 +50,14 @@ struct ChatView: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                #if targetEnvironment(simulator)
+                    .border(Color.blue)
+                #endif
 
                 AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImageSubmitted: $ChatInputImage)
+                #if targetEnvironment(simulator)
+                    .border(Color.green)
+                #endif
             }.navigationTitle("GermaAiChat")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -95,7 +101,7 @@ struct AskAiView: View {
         VStack {
             if !ResultImage.isEmpty {
                 VStack {
-                    Text("Including image:").foregroundStyle(.gray).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    Text("Including image:").foregroundStyle(.gray).frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottomLeading)
                     ScrollView(.horizontal) {
                         HStack {
                             Image(uiImage: UIImage(data: ResultImage)!)
@@ -144,7 +150,7 @@ struct AskAiView: View {
 
             }.padding(EdgeInsets(top: 0, leading: 2.5, bottom: 20, trailing: 2.5))
 
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        }.frame(maxWidth: .infinity, alignment: .bottom)
     }
 
     func askAI(Question: String, Media: Data, Answer: String) async throws -> String {
