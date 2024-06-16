@@ -43,7 +43,7 @@ struct ChatView: View {
                     Spacer()
 
                     if !AIAnswer.isEmpty {
-                        Text("Ai says: \n \(AIAnswer)")
+                        Text("Ai says: \n \(try! AttributedString(markdown: AIAnswer))")
                             .multilineTextAlignment(.leading)
                             .font(.subheadline)
                             .defaultScrollAnchor(.leading)
@@ -171,7 +171,6 @@ struct AskingAIPreview: PreviewProvider {
 
     @State static var ImageSub: Data = Data()
     // you know what f that including image. Data will be empty, add image in the preview yourself you lazy F
-    
 
     static var previews: some View {
         AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImageSubmitted: $ImageSub)
