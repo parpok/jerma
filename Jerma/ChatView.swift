@@ -19,11 +19,6 @@ struct ChatView: View {
 
     private static var ChatDict: [Role: String] = [:]
     @State private var ChatsArray = [ChatDict]
-//    @State private var AIAnswer: String = ""
-//
-//    @State private var ChatInputImage = Data()
-//
-//    @State private var UserPrompt: String = ""
 
     var body: some View {
         NavigationStack {
@@ -47,25 +42,19 @@ struct ChatView: View {
                                         Text("\(role.rawValue.capitalized) said:")
                                             .font(.headline)
                                             .frame(maxHeight: .infinity, alignment: .topLeading)
-                                        
+
                                         Text(try! AttributedString(markdown: message))
                                             .font(.body)
                                             .multilineTextAlignment(.leading)
                                             .defaultScrollAnchor(.leading)
                                             .frame(maxWidth: .infinity, alignment: .topLeading)
-                                    }}
+                                    }
+                                }
                                 Spacer()
                             }
                         }
-                        
+
                         // Thanks ChatGPT for this cursed AF solution
-//                        VStack{
-//                            Text("\(chat.keys.s) said")
-//                                .multilineTextAlignment(.leading)
-//                                .defaultScrollAnchor(.leading)
-//                                .frame(maxWidth: .infinity, alignment: .leading)
-//                            Spacer()
-//                        }
                     }
 //                    if !UserPrompt.isEmpty {
 //                        Text("You: \n\(UserPrompt)")
@@ -85,16 +74,7 @@ struct ChatView: View {
 //                            }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .topLeading)
 //                        }
 //                    }
-//
-//                    Spacer()
-//
-//                    if !AIAnswer.isEmpty {
-//                        Text("Ai says: \n\(try! AttributedString(markdown: AIAnswer))")
-//                            .multilineTextAlignment(.leading)
-//                            .font(.subheadline)
-//                            .defaultScrollAnchor(.leading)
-//                            .frame(maxWidth: .infinity, alignment: .topLeading)
-//                    }
+
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 #if targetEnvironment(simulator)
                     .border(Color.blue)
@@ -208,24 +188,18 @@ struct AskAiView: View {
             print(text)
             self.Answer = text
             chatArray.append([.ai: text])
-            // yes i know i18 people will hate this i should probably go with a dictionary or something
+            // now better
         }
     }
 }
 
 struct AskingAIPreview: PreviewProvider {
-//    @State static var Question = "Hello, U up"
-//    @State static var Answer = "This is a test"
-
     @State static var Chats: [[Role: String]] = [[.user: "Hello there"], [.ai: "whats up?"]]
     @State static var ImageSub: Data = Data()
     // you know what f that including image. Data will be empty, add image in the preview yourself you lazy F
+    // Thats useless for now
 
     static var previews: some View {
         AskAiView(chatArray: $Chats)
     }
-
-//    static var previews: some View {
-//        AskAiView(UserQuestionSubmitted: $Question, Answer: $Answer, ResultImageSubmitted: $ImageSub)
-//    }
 }
