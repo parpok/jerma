@@ -9,28 +9,53 @@ import GoogleGenerativeAI
 import PhotosUI
 import SwiftUI
 
+enum Role: String {
+    case ai
+    case user
+}
+
 struct ChatView: View {
     @State private var ChosenModel: ModelsAvailble = .gemini_1_5_flash
 
-    @State private var ChatsArray: [String] = []
+    private static var ChatDict: [Role: String] = [:]
+    @State private var ChatsArray = [ChatDict]
 //    @State private var AIAnswer: String = ""
 //
 //    @State private var ChatInputImage = Data()
 //
 //    @State private var UserPrompt: String = ""
+
     var body: some View {
         NavigationStack {
             VStack {
                 ScrollView {
-                    
-                    ForEach(ChatsArray, id: \.self){chat in
-                        VStack{
-                            Text(try! AttributedString(markdown: chat))
-                                .multilineTextAlignment(.leading)
-                                .defaultScrollAnchor(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Spacer()
-                        }}
+                    ForEach(ChatsArray.indices, id: \.self) { index in
+                        let dicks = ChatsArray[index]
+                        ForEach(dicks.keys.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { role in
+                            if let message = dicks[role] {
+                                HStack {
+                                    Text("\(role.rawValue.capitalized):")
+                                        .font(.headline)
+                                        .foregroundColor(role == .user ? .blue : .green)
+                                    Text(message)
+                                        .font(.body)
+                                        .multilineTextAlignment(.leading)
+                                        .defaultScrollAnchor(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                Spacer()
+                            }
+                        }
+                        
+                        // Thanks ChatGPT for this cursed AF solution
+//                        VStack{
+//                            Text("\(chat.keys.s) said")
+//                                .multilineTextAlignment(.leading)
+//                                .defaultScrollAnchor(.leading)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            Spacer()
+//                        }
+                    }
 //                    if !UserPrompt.isEmpty {
 //                        Text("You: \n\(UserPrompt)")
 //                            .multilineTextAlignment(.leading)
@@ -101,7 +126,7 @@ struct ChatView: View {
 struct AskAiView: View {
     @State private var UserQuestion: String = ""
 
-    @Binding var chatArray: [String]
+    @Binding var chatArray: [[Role: String]]
     @State private var UserQuestionSubmitted: String = ""
     @State private var Answer: String = ""
 
@@ -140,7 +165,7 @@ struct AskAiView: View {
                 TextField("Ask something", text: $UserQuestion, axis: .vertical)
                     .textFieldStyle(.roundedBorder).onKeyPress(.return, action: {
                         UserQuestionSubmitted = UserQuestion
-                        chatArray.append("# You said: \n \(UserQuestionSubmitted)")
+                        chatArray.append([.user: UserQuestionSubmitted])
                         UserQuestion = ""
 
 //                        ResultImageSubmitted = ResultImage
@@ -165,13 +190,13 @@ struct AskAiView: View {
 
         }.frame(maxWidth: .infinity, alignment: .bottom)
     }
-    
+
     func askAI(Question: String, Answer: String) async throws {
         let response = try await chat.sendMessage(Question)
         if let text = response.text {
             print(text)
             self.Answer = text
-            chatArray.append("# Ai said: \(text)")
+            chatArray.append([.ai: text])
             // yes i know i18 people will hate this i should probably go with a dictionary or something
         }
     }
@@ -181,7 +206,7 @@ struct AskingAIPreview: PreviewProvider {
 //    @State static var Question = "Hello, U up"
 //    @State static var Answer = "This is a test"
 
-    @State static var Chats: [String] = ["Hello", "Testing"]
+    @State static var Chats: [[Role: String]] = [[.user: "Hello there"], [.ai: "whats up?"]]
     @State static var ImageSub: Data = Data()
     // you know what f that including image. Data will be empty, add image in the preview yourself you lazy F
 
