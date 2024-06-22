@@ -34,15 +34,26 @@ struct ChatView: View {
                         ForEach(dicks.keys.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { role in
                             if let message = dicks[role] {
                                 HStack {
-                                    Text("\(role.rawValue.capitalized):")
-                                        .font(.headline)
-                                        .foregroundColor(role == .user ? .blue : .green)
-                                    Text(message)
-                                        .font(.body)
-                                        .multilineTextAlignment(.leading)
-                                        .defaultScrollAnchor(.leading)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
+                                    if role.rawValue.capitalized == "User" {
+                                        Text("You said:")
+                                            .font(.headline)
+                                            .frame(maxHeight: .infinity, alignment: .topLeading)
+                                        Text(try! AttributedString(markdown: message))
+                                            .font(.body)
+                                            .multilineTextAlignment(.leading)
+                                            .defaultScrollAnchor(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                                    } else {
+                                        Text("\(role.rawValue.capitalized) said:")
+                                            .font(.headline)
+                                            .frame(maxHeight: .infinity, alignment: .topLeading)
+                                        
+                                        Text(try! AttributedString(markdown: message))
+                                            .font(.body)
+                                            .multilineTextAlignment(.leading)
+                                            .defaultScrollAnchor(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }}
                                 Spacer()
                             }
                         }
