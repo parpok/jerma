@@ -7,12 +7,8 @@
 
 import GoogleGenerativeAI
 import PhotosUI
+import SwiftData
 import SwiftUI
-
-enum Role: String {
-    case ai
-    case user
-}
 
 struct ChatView: View {
     @State private var ChosenModel: ModelsAvailble = .gemini_1_5_flash
@@ -125,6 +121,9 @@ struct AskAiView: View {
     @State private var ResultImage: Data = Data()
 //    @Binding var ResultImageSubmitted: Data
 
+    @Environment(\.modelContext) private var ModelContext
+
+    var CurrentChat: Chats?
     var body: some View {
         VStack {
             if !ResultImage.isEmpty {
@@ -188,7 +187,16 @@ struct AskAiView: View {
             print(text)
             self.Answer = text
             chatArray.append([.ai: text])
-            // now better
+            save()
+        }
+    }
+
+    private func save() {
+        if var CurrentChat {
+            CurrentChat.chatHistory = chatArray
+        } else {
+            let newChat = Chats(id: UUID(), chatHistory: chatArray)
+            ModelContext.insert(newChat)
         }
     }
 }
