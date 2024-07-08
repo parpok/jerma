@@ -6,7 +6,6 @@
 //
 
 import GoogleGenerativeAI
-import PhotosUI
 import SwiftData
 import SwiftUI
 
@@ -51,24 +50,6 @@ struct ChatView: View {
 
                         // Thanks ChatGPT for this cursed AF solution
                     }
-//                    if !UserPrompt.isEmpty {
-//                        Text("You: \n\(UserPrompt)")
-//                            .multilineTextAlignment(.leading)
-//                            .font(.subheadline)
-//                            .defaultScrollAnchor(.leading)
-//                            .frame(maxWidth: .infinity, alignment: .topLeading)
-//                    }
-//
-//                    if !ChatInputImage.isEmpty {
-//                        ScrollView(.horizontal) {
-//                            HStack {
-//                                Image(uiImage: UIImage(data: ChatInputImage)!)
-//                                    .resizable()
-//                                    .scaledToFit()
-//
-//                            }.frame(maxWidth: .infinity, maxHeight: 100, alignment: .topLeading)
-//                        }
-//                    }
 
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 #if targetEnvironment(simulator)
@@ -76,9 +57,8 @@ struct ChatView: View {
                 #endif
 
                 AskAiView(chatArray: $ChatsArray)
-//                AskAiView(UserQuestionSubmitted: $UserPrompt, Answer: $AIAnswer, ResultImageSubmitted: $ChatInputImage)
                 #if targetEnvironment(simulator)
-.border(Color.green)
+                    .border(Color.green)
                 #endif
             }.navigationTitle("GermaAiChat")
                 .toolbar {
@@ -115,49 +95,19 @@ struct AskAiView: View {
     @State private var UserQuestionSubmitted: String = ""
     @State private var Answer: String = ""
 
-    @State private var ChosenImage: PhotosPickerItem? = nil
-    @State private var ResultImage: Data = Data()
-//    @Binding var ResultImageSubmitted: Data
-
     @Environment(\.modelContext) private var ModelContext
 
-//    var CurrentChat: Chats?
+    @Binding var chatArray: [[Role: String]]
+    var CurrentChat: Chat?
     var body: some View {
         VStack {
-            if !ResultImage.isEmpty {
-                VStack {
-                    Text("Including image:").foregroundStyle(.gray).frame(maxWidth: .infinity, maxHeight: 100, alignment: .bottomLeading)
-                    ScrollView(.horizontal) {
-                        HStack {
-                            Image(uiImage: UIImage(data: ResultImage)!)
-                                .resizable()
-                                .scaledToFit()
-
-                        }.frame(maxWidth: .infinity, maxHeight: 100)
-                    }
-                }
-            }
             HStack {
-//                PhotosPicker(selection: $ChosenImage) {
-//                    Image(systemName: "plus.square")
-//                }.buttonStyle(.bordered)
-//                    .onChange(of: ChosenImage) {
-//                        Task {
-//                            if let loaded = try? await ChosenImage?.loadTransferable(type: Data.self) {
-//                                ResultImage = loaded
-//                            } else {
-//                                print("Upload didn't work")
-//                            }
-//                        }
-//                    }
                 TextField("Ask something", text: $UserQuestion, axis: .vertical)
                     .textFieldStyle(.roundedBorder).onKeyPress(.return, action: {
                         UserQuestionSubmitted = UserQuestion
                         chatArray.append([.user: UserQuestionSubmitted])
                         UserQuestion = ""
 
-//                        ResultImageSubmitted = ResultImage
-//                        ResultImage = Data()
                         Task {
                             try await askAI(Question: UserQuestionSubmitted, Answer: Answer)
                         }

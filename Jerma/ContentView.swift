@@ -19,21 +19,19 @@ struct ContentView: View {
                     NavigationLink("New Chat", destination: ChatView())
                 }
                 Section("Previous chats") {
-                    ForEach(Chats) { _ in
-                        NavigationLink("Chat", destination: ChatView())
+                    ForEach(Chats) { chat in
+                        NavigationLink("chat", destination: ChatView())
+                            .swipeActions {
+                                Button("Delete chat", systemImage: "trash", role: .destructive) {
+                                    modelContext.delete(chat)
+                                }
+                            }
                     }
                 }
             }.navigationTitle("Germa")
 
         } detail: {
             ChatView()
-        }
-    }
-
-    func deletething(_ indexSet: IndexSet) {
-        for i in indexSet {
-            let chats = Chats[i]
-            modelContext.delete(chats)
         }
     }
 }
