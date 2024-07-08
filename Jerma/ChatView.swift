@@ -13,8 +13,7 @@ import SwiftUI
 struct ChatView: View {
     @State private var ChosenModel: ModelsAvailble = .gemini_1_5_flash
 
-    private static var ChatDict: [Role: String] = [:]
-    @State private var ChatsArray = [ChatDict]
+    @State private var ChatsArray: [[Role: String]] = []
 
     var body: some View {
         NavigationStack {
@@ -113,7 +112,6 @@ struct ChatView: View {
 struct AskAiView: View {
     @State private var UserQuestion: String = ""
 
-    @Binding var chatArray: [[Role: String]]
     @State private var UserQuestionSubmitted: String = ""
     @State private var Answer: String = ""
 
@@ -123,7 +121,7 @@ struct AskAiView: View {
 
     @Environment(\.modelContext) private var ModelContext
 
-    var CurrentChat: Chats?
+//    var CurrentChat: Chats?
     var body: some View {
         VStack {
             if !ResultImage.isEmpty {
@@ -195,7 +193,7 @@ struct AskAiView: View {
         if var CurrentChat {
             CurrentChat.chatHistory = chatArray
         } else {
-            let newChat = Chats(id: UUID(), chatHistory: chatArray)
+            let newChat = Chat(id: UUID(), chatHistory: chatArray)
             ModelContext.insert(newChat)
         }
     }

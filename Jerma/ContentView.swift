@@ -9,7 +9,9 @@ import SwiftData
 import SwiftUI
 
 struct ContentView: View {
-    @Query private var Chats: [Chats]
+    @Query private var Chats: [Chat]
+    @Environment(\.modelContext) private var modelContext
+
     var body: some View {
         NavigationSplitView {
             List {
@@ -27,9 +29,16 @@ struct ContentView: View {
             ChatView()
         }
     }
+
+    func deletething(_ indexSet: IndexSet) {
+        for i in indexSet {
+            let chats = Chats[i]
+            modelContext.delete(chats)
+        }
+    }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Chats.self, inMemory: true)
+        .modelContainer(for: Chat.self, inMemory: true)
 }
