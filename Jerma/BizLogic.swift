@@ -49,7 +49,7 @@ enum Role: String, Codable{
     case user
 }
 
-@Model class Chats {
+@Model class Chat {
     @Attribute(.unique)
     var id: UUID
     @Attribute(.preserveValueOnDeletion)
