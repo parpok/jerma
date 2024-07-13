@@ -20,7 +20,9 @@ struct ContentView: View {
                 }
                 Section("Previous chats") {
                     ForEach(Chats) { chat in
-                        NavigationLink("chat", destination: ChatView())
+                        NavigationLink(destination: ChatView(ChatsArray: chat.chatHistory), label: {
+                            Text("Chat from \(chat.date)")
+                        })
                             .swipeActions {
                                 Button("Delete chat", systemImage: "trash", role: .destructive) {
                                     modelContext.delete(chat)

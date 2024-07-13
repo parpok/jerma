@@ -51,7 +51,9 @@ enum Role: String, Codable{
 
 @Model class Chat {
     @Attribute(.unique)
-    var id: UUID
+    var ChatID: UUID
+    
+    var date: Date
     @Attribute(.preserveValueOnDeletion)
     var chatHistory: [[Role: String]]
 
@@ -60,8 +62,9 @@ enum Role: String, Codable{
 //        #Unique<Chats>([\.id])
 // Guess who wanted to integrade new SwiftData things but can't because sorry only iOS 18 and can't put it behind Availble or extensions
 
-    init(id: UUID, chatHistory: [[Role : String]]) {
-        self.id = id
+    init(ChatID: UUID, date: Date, chatHistory: [[Role : String]]) {
+        self.ChatID = ChatID
+        self.date = date
         self.chatHistory = chatHistory
     }
 }
